@@ -4,7 +4,7 @@ import analisi as lib
 from scipy.optimize import curve_fit
 
 R =  993
-R_L =39
+R_L = 39
 Vin = 4
 
 def mod_HCL_f_RLC(omega, C, L):
@@ -13,6 +13,12 @@ def mod_HCL_f_RLC(omega, C, L):
     denominator = np.sqrt((1 - omega**2 * L * C)**2 + omega**2 * C**2 * (R + R_L)**2)
     return numerator / denominator
 
+def arg_HCL_f_RLC(omega, C, L):
+    term1 = np.arctan(omega * C * R_L / (1 - omega**2 * L * C))
+    term2 = np.arctan(omega * C * (R + R_L) / (1 - omega**2 * L * C))
+    return term1 - term2
+
+
 frequenze_RLC_RL = np.array([  200, 500, 1000, 1300, 1600, 1800, 1950, 2050, 2150, 2250, 2350, 2400,  2450,  2690, 3000, 3300, 3600,  4600
  , 6100, 9300, 12300, 16500, 20100,   45100 ]) #
 
@@ -20,7 +26,7 @@ V_RLC_RL = np.array([ 4, 3.90, 3.24, 2.60, 1.92, 1.36, 1,  720*10**(-3), 520*10*
                      400*10**(-3), 480*10**(-3), 880*10**(-3), 1.44, 1.84,
                           2.16,  2.96, 3.52, 3.92, 4,  4,  4,  4 ]) # 4
 
-sfase_ang_RLC_RL = np.array([  -4.32, -16.2,  -33.5,  -43.5,  -53, -59.6, -59.8, -70, -76 , 79 , 83 , 87 , 90, 63, 59.5 , 57.1 ,
+sfase_ang_RLC_RL = np.array([  -4.32, -16.2,  -33.5,  -43.5,  -53, -59.6, -59.8, -70, -76 , -79 , -83 , -87 , 90, 63, 59.5 , 57.1 ,
                           52.9, 40.2, 30.3,  19.2, 15.5, 11,  8.95, 4.55 ])
 
 # - 56 al posto di 70
@@ -33,7 +39,7 @@ sigma = np.ones(len(frequenze_RLC_RL))
 sigma_RLC_HCL =  (2*0.1/np.sqrt(12))*sigma
 
 
-arg_HCL = sfase_ang_RLC_RL*2*np.pi
+arg_HCL = sfase_ang_RLC_RL*np.pi/180
 sigma_ang_RLC_RL = 2*0.5/np.sqrt(12)*sigma*np.pi/180
 
 
@@ -64,7 +70,23 @@ lib.plot_fit(omega_RLC_R, arg_HR_3, yerr = sigma_ang_RLC_R , func= arg_HR_f_RLC_
 plt.show()
 '''
 lib.plot_fit(omega_RLC_RL, mod_HCL, func= mod_HCL_f_RLC ,yerr = sigma_RLC_HCL , p0 = [10**(-7), 10**(-2)],
-             parameter_names=['C', 'L'], xlabel = '$\omega$ [rad/s]', ylabel = 'modulo $H_CL$'  , prediction_band=True, confidence_intervals=True)  
+             parameter_names=['C', 'L'], xlabel = '$\omega$ [rad/s]', ylabel = 'modulo $H_CL$'  , prediction_band=True, confidence_intervals=True, method = 'odr')  
 plt.xscale('log')
 plt.show()
+
+
+popt1, pcov1 = curve_fit(arg_HCL_f_RLC, omega_RLC_RL, arg_HCL, p0=[10**(-7), 10**(-2)], sigma=sigma_ang_RLC_RL, absolute_sigma=True)
+C_fit1, L_fit1 = popt1
+C_err1, L_err1 = np.sqrt(np.diag(pcov1))
+fig, ax = plt.subplots()
+x_fit1 = np.linspace(min(omega_RLC_RL), max(omega_RLC_RL), 1000)
+y_fit1 = arg_HCL_f_RLC(x_fit1, C_fit1, L_fit1)
+ax.plot(x_fit1, y_fit1, label=f'Fit: C = {C_fit1:.2e} F, L = {L_fit1:.2e} H')
+ax.errorbar(omega_RLC_RL, arg_HCL, yerr=sigma_ang_RLC_RL, fmt='o', label='Dati')
+ax.set_xlabel('ω [rad/s]')
+ax.set_ylabel('Argomento normalizzato')
+ax.set_xscale('log')
+ax.legend()
+plt.show()
+
 
