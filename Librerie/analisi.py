@@ -64,7 +64,7 @@ def fit(x: np.ndarray,
         chi2 = np.sum((residuals / sigma) ** 2) if sigma is not None else None
 
     elif method == 'odr':
-        model = Model(function)
+        model = Model(lambda beta, x: function(x, *beta))
         data = RealData(x, y, sx=xerr, sy=yerr)
         odr = ODR(data, model, beta0=p0)
         output = odr.run()
