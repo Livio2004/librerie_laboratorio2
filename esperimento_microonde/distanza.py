@@ -10,6 +10,14 @@ from scipy.signal import find_peaks
 # sferica -> 1/r o 1/r^2 (se abbiamo intensità o campo)
 # piana: no dipend. da r
 unosur = lambda r,a,b: a/r + b # andamento 1/r
+
+def calcola_errore_V(V): #errore gaussiano su V
+    sigma = V*0.05
+    b = V + sigma
+    a = V - sigma
+    sigma_gaus = ((b-a))/np.sqrt(12)
+    return sigma_gaus
+
 # angolo 30
 r = np.array([ 17.5, 17.8, 18, 18.2, 18.8, 19.1, 19.4,  19.7, 19.9, 20.1, 20.3, 20.5, 20.7, 20.9, 21.1,
               21.3, 21.5, 21.7, 21.9, 22.1,  22.3, 22.5, 22.7, 22.9, 23.1, 23.3, 23.5, 23.7, 23.9, 24.1, 24.3, 24.5, 24.7,
@@ -56,9 +64,33 @@ plt.plot(picchi_r, picchi_V, 'ro', label='Picchi trovati')
 #plt.ylim(4.0,4.5)
 plt.show()
 plt.scatter(r, V)
-sigma_V = 0.05*np.ones(len(V_fin))  # errore gaussiano su V
+sigma_V = 0.05*np.ones(len(V_fin))  # errore gaussiano su 
+#sigma_V = calcola_errore_V(V_fin)  # errore gaussiano su V
 lib.plot_fit(r_fin, V_fin, yerr=sigma_V, func=unosur, p0=[1, 1], confidence_intervals=False, prediction_band=False)
 plt.show()
 
+'''toys = 1000
+Q_squares = []
+for i in range(toys):
+  x = np.linspace(np.min(r_fin),np.max(r_fin), 20)
+  rumore = np.random.uniform(-2, 2, size=x.shape)
+  y = unosur(x, 73.822, 0.827)  + rumore  # aggiungi rumore uniforme
+  costo = LeastSquares(x, y, 0.05, unosur)
+  fit = Minuit(costo, 1, 1) 
+  fit.hesse()
+  fit.migrad()
+  Q_squares.append(fit.fval)
+
+
+
+bin_contents, bin_edges = np.histogram(Q_squares, bins='sturges', range = (np.min(Q_squares), np.max(Q_squares)), density= True)
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.hist(Q_squares, bins = bin_edges, alpha=0.7, label='Distribuzione Q^2', density =True)
+ax.set_xlabel('Q^2')
+ax.set_ylabel('Densità di probabilità')
+ax.set_title('Distribuzione di Q^2 per 1000 toys')
+ax.legend()
+plt.show()
+
 def function(x, A, B, C) :
-  return A*np.abs(np.cos(x)) + B/(x**2)+C
+  return A*np.abs(np.cos(x)) + B/(x**2)+C'''

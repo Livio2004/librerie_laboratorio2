@@ -101,7 +101,7 @@ try:
     print(f"Tensione al massimo (dal fit): {c_fit:.3f} V")
 
     # --- Calcolo del passo del reticolo d ---
-    lambda_nota = 0.075  # m (3.1 cm)
+    lambda_nota = 0.0315  # m (3.1 cm)
     # Assumiamo che lambda_nota sia esatta o con incertezza trascurabile per questo calcolo
     # Se lambda_nota avesse un'incertezza significativa, sigma_lambda_nota, andrebbe propagata.
     sigma_lambda_nota = 0 # Assumiamo esatta

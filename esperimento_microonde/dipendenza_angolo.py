@@ -31,8 +31,8 @@ theta_2 = np.array([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, -10, -20, -30 , -40, 
 V_T_2 = np.array([3.52 ,3.24 ,2.05 ,0.680 ,0.418 ,0.139,0.0217 ,0.0152 ,0.0131 ,0.03, 3.52, 2.617, 1.604, 0.730 , 0.270, 0.101, 0.008, 0.005, 0.002])
 theta_1_rad = np.radians(theta)
 theta_2_rad = np.radians(theta_2)
-sigma_ang_1 = np.ones(len(theta_1_rad))*0.05
-sigma_ang_2 = np.ones(len(theta_2_rad))*0.05
+sigma_ang_1 = np.ones(len(theta_1_rad))*0.01
+sigma_ang_2 = np.ones(len(theta_2_rad))*0.01
 sigma_V_T_1 = np.maximum(calcola_errore_V(V_T_1), 0.05)
 sigma_V_T_2 = np.maximum(calcola_errore_V(V_T_2), 0.05)
 #sigma_V_T_1 = np.ones(len(V_T_1)) * 0.05
@@ -56,7 +56,7 @@ def modello4(theta, A, sigma):
   return A * np.exp( - (theta)**2 / (2*sigma**2) )
 
 
-lib.plot_fit(theta_1_rad, V_T_1, yerr = sigma_V_T_1, func= modello3, p0= [4, 2] , confidence_intervals=False, prediction_band=False)
+lib.plot_fit(theta_1_rad, V_T_1, xerr = sigma_ang_1 , yerr = sigma_V_T_1, method='curve_fit', func= modello3, p0= [4, 2] , confidence_intervals=False, prediction_band=False)
 plt.show()
 
 #fascio altamente collimato con pochi gradi di apertura
