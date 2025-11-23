@@ -1,4 +1,24 @@
 # librerie_laboratorio2
-Librerie per laboratorio 2
+Welcome to this repository. Here, you will find a collection of Python libraries and scripts developed to support **Laboratory 2** course activities, with a specific focus on statistical data analysis, curve fitting, and uncertainty management.
 
-Utilizzare le librerie presenti in questa repository per laboratorio 2 e per l'analisi dati. Sono ben accette correzioni/miglioramenti e aggiunte di codice se necessario.
+The goal is to provide ready-to-use tools to speed up data processing and report writing.
+
+## 🚀 Key Features
+
+*   **Data Analysis:** Functions for calculating means, standard deviations, and error propagation.
+*   **Fitting:** Simplified wrappers for linear and non-linear regressions (based on `scipy.optimize` and `iminuit`).
+*   **Plotting:** Predefined styles and functions to generate report-ready plots (including residuals, error bars, etc.).
+
+## 📋 Requirements
+
+To use these libraries, ensure you have Python (version 3.8 or higher) installed, along with the following scientific libraries:
+
+*   `numpy`
+*   `matplotlib`
+*   `scipy`
+*   `iminuit`
+
+You can install the necessary dependencies by running:
+
+```bash
+pip install numpy matplotlib scipy iminuit
